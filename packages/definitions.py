@@ -5,6 +5,7 @@ WORK_DIR = "/workdir"
 INIT_DIR = f"{WORK_DIR}/init"
 MASTERS_DIR = f"{WORK_DIR}/masters"
 IMAGES_DIR = f"{WORK_DIR}/images"
+FONTS_DIR = f"{WORK_DIR}/fonts"
 
 # ファイルパス定義
 MASTER_MAIN_WEAPON_PATH = f"{MASTERS_DIR}/main_weapon.csv"
