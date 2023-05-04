@@ -39,3 +39,11 @@ docker compose exec app python db_update.py
 ```sh
 docker compose exec app python db_reset.py
 ```
+
+## マスターデータの取得
+
+以下のコマンドを実行してブキ一覧などのマスターデータを取得します。
+
+```sh
+docker compose exec app python master_update.py
+```

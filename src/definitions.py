@@ -3,6 +3,24 @@ from enum import Enum
 # ディレクトリ定義
 WORK_DIR = "/workdir"
 INIT_DIR = f"{WORK_DIR}/init"
+MASTERS_DIR = f"{WORK_DIR}/masters"
+
+# ファイルパス定義
+MASTER_MAIN_WEAPON_PATH = f"{MASTERS_DIR}/main_weapon.csv"
+MASTER_SUB_WEAPON_PATH = f"{MASTERS_DIR}/sub_weapon.csv"
+MASTER_SPECIAL_WEAPON_PATH = f"{MASTERS_DIR}/special_weapon.csv"
+MASTER_WEAPON_TYPE_PATH = f"{MASTERS_DIR}/weapon_type.csv"
+MASTER_RULE_PATH = f"{MASTERS_DIR}/rule.csv"
+MASTER_STAGE_PATH = f"{MASTERS_DIR}/stage.csv"
+MASTER_LOBBY_PATH = f"{MASTERS_DIR}/lobby.csv"
+
+# stat.ink の REST API 関連の定義
+STATINK_BASE_URL = "https://stat.ink"
+STATINK_API_BASE_URL = f"{STATINK_BASE_URL}/api/v3"
+STATINK_API_WEAPON_URL = f"{STATINK_API_BASE_URL}/weapon"
+STATINK_API_LOBBY_URL = f"{STATINK_API_BASE_URL}/lobby"
+STATINK_API_RULE_URL = f"{STATINK_API_BASE_URL}/rule"
+STATINK_API_STAGE_URL = f"{STATINK_API_BASE_URL}/stage"
 
 # stat.ink 統計情報ダウンロード URL などの定義
 STATINK_DOWNLOAD_BASE_URL = "https://dl-stats.stats.ink"
@@ -69,6 +87,16 @@ STAGE_ORDER = [
     Stage.YUNOHANA.value,
     Stage.AMABI.value,
 ]
+
+
+class Master(Enum):
+    MAIN_WEAPON = "main_weapon"
+    SUB_WEAPON = "sub_weapon"
+    SPECIAL_WEAPON = "special_weapon"
+    WEAPON_TYPE = "weapon_type"
+    RULE = "rule"
+    STAGE = "stage"
+    LOBBY = "lobby"
 
 
 COLOR_PAIR_ORDER = [
