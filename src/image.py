@@ -1,3 +1,6 @@
+"""
+画像データを管理する。
+"""
 import os
 import re
 import time
@@ -27,16 +30,24 @@ def download_images(delay: int = 3):
     """
     image_dir = d.IMAGES_DIR
 
+    # API 情報へアクセスして画像パスを収集する
     r = requests.get(d.STATINK_API_WEAPON_INFO_URL)
     soup = BeautifulSoup(r.content, "html.parser")
     images = soup.select("tr img")
     paths = list(map(lambda x: x.get("src"), images))
+
+    # メインウェポン、サブウェポン、スペシャルウェポンの画像パスのみを抽出する
     paths = [x for x in paths if re.match("^/assets/.+/(main|sub|special)/.+\.png", x)]
+    # クエリパラメータは除外する
     paths = list(map(lambda x: x[: x.find("?")], paths))
+    # 重複した画像パスは除外する
     paths = list(set(paths))
+    # 既に取得済みの画像は除外する
     paths = [
         x for x in paths if not os.path.exists(f"{image_dir}/{os.path.basename(x)}")
     ]
+
+    # 画像をダウンロードしてディレクトリに保存する
     file_num = len(paths)
     for i, path in enumerate(paths):
         time.sleep(delay)

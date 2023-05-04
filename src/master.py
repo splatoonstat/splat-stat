@@ -1,7 +1,6 @@
 """
-マスターデータを取得する。
+マスターデータを管理する。
 """
-
 import os
 import re
 import json
@@ -12,6 +11,9 @@ import src.definitions as d
 
 
 def update_weapon_master():
+    """
+    メインウェポン、サブウェポン、スペシャルウェポン、ブキタイプのマスターデータを取得し、csv ファイルとして格納する。
+    """
     os.makedirs(d.MASTERS_DIR, exist_ok=True)
     r = requests.get(d.STATINK_API_WEAPON_URL)
     weapon_json = json.loads(r.content)
@@ -58,6 +60,9 @@ def update_weapon_master():
 
 
 def update_rule_master():
+    """
+    ルールのマスターデータを取得し、csv ファイルとして格納する。
+    """
     os.makedirs(d.MASTERS_DIR, exist_ok=True)
     r = requests.get(d.STATINK_API_RULE_URL)
     rule_json = json.loads(r.content)
@@ -74,6 +79,9 @@ def update_rule_master():
 
 
 def update_stage_master():
+    """
+    ステージのマスターデータを取得し、csv ファイルとして格納する。
+    """
     os.makedirs(d.MASTERS_DIR, exist_ok=True)
     r = requests.get(d.STATINK_API_STAGE_URL)
     stage_json = json.loads(r.content)
@@ -90,6 +98,9 @@ def update_stage_master():
 
 
 def update_lobby_master():
+    """
+    ロビーのマスターデータを取得し、csv ファイルとして格納する。
+    """
     os.makedirs(d.MASTERS_DIR, exist_ok=True)
     r = requests.get(d.STATINK_API_LOBBY_URL)
     lobby_json = json.loads(r.content)
@@ -106,6 +117,9 @@ def update_lobby_master():
 
 
 def update_masters():
+    """
+    すべてのマスターデータを取得する。
+    """
     update_weapon_master()
     update_rule_master()
     update_stage_master()
@@ -113,6 +127,9 @@ def update_masters():
 
 
 def load_master(target: d.Master) -> pd.DataFrame:
+    """
+    指定したマスターデータの DataFrame を返す。
+    """
     match target:
         case d.Master.MAIN_WEAPON:
             return pd.read_csv(d.MASTER_MAIN_WEAPON_PATH)
@@ -129,4 +146,4 @@ def load_master(target: d.Master) -> pd.DataFrame:
         case d.Master.LOBBY:
             return pd.read_csv(d.MASTER_LOBBY_PATH)
         case _:
-            print("not found")
+            raise ValueError("target not found")
