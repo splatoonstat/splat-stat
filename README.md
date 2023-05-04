@@ -47,3 +47,11 @@ docker compose exec app python db_reset.py
 ```sh
 docker compose exec app python master_update.py
 ```
+
+## 画像データの取得
+
+以下のコマンドを実行してブキ、サブウェポン、スペシャルウェポンの画像データを取得します。
+
+```sh
+docker compose exec app python image_update.py
+```

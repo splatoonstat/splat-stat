@@ -4,6 +4,7 @@ from enum import Enum
 WORK_DIR = "/workdir"
 INIT_DIR = f"{WORK_DIR}/init"
 MASTERS_DIR = f"{WORK_DIR}/masters"
+IMAGES_DIR = f"{WORK_DIR}/images"
 
 # ファイルパス定義
 MASTER_MAIN_WEAPON_PATH = f"{MASTERS_DIR}/main_weapon.csv"
@@ -21,6 +22,7 @@ STATINK_API_WEAPON_URL = f"{STATINK_API_BASE_URL}/weapon"
 STATINK_API_LOBBY_URL = f"{STATINK_API_BASE_URL}/lobby"
 STATINK_API_RULE_URL = f"{STATINK_API_BASE_URL}/rule"
 STATINK_API_STAGE_URL = f"{STATINK_API_BASE_URL}/stage"
+STATINK_API_WEAPON_INFO_URL = f"{STATINK_BASE_URL}/api-info/weapon3"
 
 # stat.ink 統計情報ダウンロード URL などの定義
 STATINK_DOWNLOAD_BASE_URL = "https://dl-stats.stats.ink"
