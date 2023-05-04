@@ -42,7 +42,7 @@ docker compose exec app python scripts/db_reset.py
 
 ## マスターデータの取得
 
-以下のコマンドを実行してブキ一覧などのマスターデータを取得します。
+以下のコマンドを実行してブキ一覧などのマスターデータを取得します。 取得したデータは `masters` ディレクトリに格納されます。
 
 ```sh
 docker compose exec app python scripts/master_update.py
@@ -50,7 +50,7 @@ docker compose exec app python scripts/master_update.py
 
 ## 画像データの取得
 
-以下のコマンドを実行してブキ、サブウェポン、スペシャルウェポンの画像データを取得します。
+以下のコマンドを実行してブキ、サブウェポン、スペシャルウェポンの画像データを取得します。 取得したデータは `images` ディレクトリに格納されます。
 
 ```sh
 docker compose exec app python scripts/image_update.py
