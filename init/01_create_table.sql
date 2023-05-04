@@ -90,6 +90,5 @@ create table if not exists battles (
     "medal2-grade" varchar(15),
     "medal2-name" varchar(255),
     "medal3-grade" varchar(15),
-    "medal3-name" varchar(255),
-    primary key(period, lobby, mode, stage, time, win, knockout, "A1-weapon", "A1-kill-assist", "A1-inked", "A2-weapon", "A2-kill-assist", "A2-inked", "A3-weapon", "A3-kill-assist", "A3-inked", "A4-weapon", "A4-kill-assist", "A4-inked", "B1-weapon", "B1-kill-assist", "B1-inked", "B2-weapon", "B2-kill-assist", "B2-inked", "B3-weapon", "B3-kill-assist", "B3-inked", "B4-weapon", "B4-kill-assist", "B4-inked")
+    "medal3-name" varchar(255)
 );
