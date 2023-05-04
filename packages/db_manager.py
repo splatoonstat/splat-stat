@@ -11,8 +11,8 @@ import datetime as dt
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
-import src.db as db
-import src.definitions as d
+import packages.db as db
+import packages.definitions as d
 
 
 def _get_csv_file_paths(

@@ -1,4 +1,4 @@
-from src.master import update_masters
+from packages.master import update_masters
 
 
 def main():

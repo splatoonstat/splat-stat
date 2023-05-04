@@ -5,7 +5,7 @@ from typing import Optional
 import datetime as dt
 import pandas as pd
 import sqlalchemy as sa
-import src.definitions as d
+import packages.definitions as d
 
 
 connection_config = {

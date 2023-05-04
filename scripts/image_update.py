@@ -1,4 +1,4 @@
-from src.image import download_images
+from packages.image import download_images
 
 
 def main():

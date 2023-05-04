@@ -1,4 +1,4 @@
-from src.db_manager import reset_db
+from packages.db_manager import reset_db
 
 
 def main():

@@ -6,7 +6,7 @@ import re
 import time
 import requests
 from bs4 import BeautifulSoup
-import src.definitions as d
+import packages.definitions as d
 
 
 def _download_file_to_dir(url: str, dst_dir: str):

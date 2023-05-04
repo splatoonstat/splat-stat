@@ -1,4 +1,4 @@
-from src.db_manager import init_db
+from packages.db_manager import init_db
 
 
 def main():

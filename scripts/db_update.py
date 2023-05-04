@@ -1,4 +1,4 @@
-from src.db_manager import update_db
+from packages.db_manager import update_db
 
 
 def main():

@@ -7,7 +7,7 @@ import json
 from enum import Enum
 import requests
 import pandas as pd
-import src.definitions as d
+import packages.definitions as d
 
 
 def update_weapon_master():
