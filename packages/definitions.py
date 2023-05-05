@@ -92,16 +92,6 @@ STAGE_ORDER = [
 ]
 
 
-class Master(Enum):
-    MAIN_WEAPON = "main_weapon"
-    SUB_WEAPON = "sub_weapon"
-    SPECIAL_WEAPON = "special_weapon"
-    WEAPON_TYPE = "weapon_type"
-    RULE = "rule"
-    STAGE = "stage"
-    LOBBY = "lobby"
-
-
 COLOR_PAIR_ORDER = [
     "#343bc4-#df6624",
     "#1a1aaf-#e38d24",
@@ -114,3 +104,5 @@ COLOR_PAIR_ORDER = [
     "#c43a6e-#1bbfab",
     "#d74b31-#1ec0ad",
 ]
+
+CREDIT = "@splatoon_stat"

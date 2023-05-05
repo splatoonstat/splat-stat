@@ -126,24 +126,34 @@ def update_masters():
     update_lobby_master()
 
 
+class Master(Enum):
+    MAIN_WEAPON = "main_weapon"
+    SUB_WEAPON = "sub_weapon"
+    SPECIAL_WEAPON = "special_weapon"
+    WEAPON_TYPE = "weapon_type"
+    RULE = "rule"
+    STAGE = "stage"
+    LOBBY = "lobby"
+
+
 def load_master(target: d.Master) -> pd.DataFrame:
     """
     指定したマスターデータの DataFrame を返す。
     """
     match target:
-        case d.Master.MAIN_WEAPON:
+        case Master.MAIN_WEAPON:
             return pd.read_csv(d.MASTER_MAIN_WEAPON_PATH)
-        case d.Master.SUB_WEAPON:
+        case Master.SUB_WEAPON:
             return pd.read_csv(d.MASTER_SUB_WEAPON_PATH)
-        case d.Master.SPECIAL_WEAPON:
+        case Master.SPECIAL_WEAPON:
             return pd.read_csv(d.MASTER_SPECIAL_WEAPON_PATH)
-        case d.Master.WEAPON_TYPE:
+        case Master.WEAPON_TYPE:
             return pd.read_csv(d.MASTER_WEAPON_TYPE_PATH)
-        case d.Master.RULE:
+        case Master.RULE:
             return pd.read_csv(d.MASTER_RULE_PATH)
-        case d.Master.STAGE:
+        case Master.STAGE:
             return pd.read_csv(d.MASTER_STAGE_PATH)
-        case d.Master.LOBBY:
+        case Master.LOBBY:
             return pd.read_csv(d.MASTER_LOBBY_PATH)
         case _:
             raise ValueError("target not found")

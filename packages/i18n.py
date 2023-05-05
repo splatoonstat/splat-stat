@@ -1,3 +1,4 @@
+import datetime as dt
 from enum import Enum
 from typing import Optional
 import pandas as pd
@@ -32,3 +33,40 @@ def get_translations(
 
     name_key = f"name-{locale.value}"
     return df[name_key].to_dict()
+
+
+def date_to_str(date: dt.date, locale: Locale = Locale.JA) -> str:
+    """
+    date オブジェクトを locale に合った文字列に変換し返却する。
+    """
+    match locale:
+        case Locale.JA:
+            format = "%-m/%-d"
+        case Locale.EN:
+            format = "%b. %-d"
+        case _:
+            format = "%-m/%-d"
+    return date.strftime(format)
+
+
+def duration_to_str(
+    date_from: dt.date, date_to: dt.date, locale: Locale = Locale.JA
+) -> str:
+    d1 = date_to_str(date_from, locale=locale)
+    d2 = date_to_str(date_to, locale=locale)
+    match locale:
+        case Locale.JA:
+            return f"{d1}〜{d2}"
+        case Locale.EN:
+            return f"{d1} - {d2}"
+        case _:
+            return f"{d1}〜{d2}"
+
+
+def battles_to_duration_str(battles: pd.DataFrame, locale: Locale = Locale.JA) -> str:
+    """
+    battles の開催期間を locale に合った文字列に変換し返却する。
+    """
+    date_from = battles["date"].min()
+    date_to = battles["date"].max()
+    return duration_to_str(date_from, date_to, locale=locale)
