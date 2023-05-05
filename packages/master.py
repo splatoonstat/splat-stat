@@ -136,24 +136,24 @@ class Master(Enum):
     LOBBY = "lobby"
 
 
-def load_master(target: d.Master) -> pd.DataFrame:
+def load_master(target: Master) -> pd.DataFrame:
     """
     指定したマスターデータの DataFrame を返す。
     """
     match target:
         case Master.MAIN_WEAPON:
-            return pd.read_csv(d.MASTER_MAIN_WEAPON_PATH)
+            return pd.read_csv(d.MASTER_MAIN_WEAPON_PATH, index_col="key")
         case Master.SUB_WEAPON:
-            return pd.read_csv(d.MASTER_SUB_WEAPON_PATH)
+            return pd.read_csv(d.MASTER_SUB_WEAPON_PATH, index_col="key")
         case Master.SPECIAL_WEAPON:
-            return pd.read_csv(d.MASTER_SPECIAL_WEAPON_PATH)
+            return pd.read_csv(d.MASTER_SPECIAL_WEAPON_PATH, index_col="key")
         case Master.WEAPON_TYPE:
-            return pd.read_csv(d.MASTER_WEAPON_TYPE_PATH)
+            return pd.read_csv(d.MASTER_WEAPON_TYPE_PATH, index_col="key")
         case Master.RULE:
-            return pd.read_csv(d.MASTER_RULE_PATH)
+            return pd.read_csv(d.MASTER_RULE_PATH, index_col="key")
         case Master.STAGE:
-            return pd.read_csv(d.MASTER_STAGE_PATH)
+            return pd.read_csv(d.MASTER_STAGE_PATH, index_col="key")
         case Master.LOBBY:
-            return pd.read_csv(d.MASTER_LOBBY_PATH)
+            return pd.read_csv(d.MASTER_LOBBY_PATH, index_col="key")
         case _:
             raise ValueError("target not found")

@@ -41,6 +41,7 @@ def load_battles(
     mode: Optional[d.Mode] = None,
     date_from: Optional[dt.date] = None,
     date_to: Optional[dt.date] = None,
+    replace_heroshooter_to_sshooter: bool = True,
 ) -> pd.DataFrame:
     """
     DB から戦績データを読み込んで DataFrame として返却する。
@@ -57,4 +58,10 @@ def load_battles(
     if len(options) > 0:
         sqls = list(map(lambda x: x["sql"], options))
         sql += " where " + " and ".join(sqls)
-    return pd.read_sql(sql=sql, con=engine)
+    df = pd.read_sql(sql=sql, con=engine)
+
+    # ヒーローシューターレプリカをスプラシューターに置換する
+    if replace_heroshooter_to_sshooter:
+        df = df.replace("heroshooter_replica", "sshooter")
+
+    return df
