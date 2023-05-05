@@ -1,5 +1,7 @@
 # splat-stat
 
+> stat.ink の統計情報を利用した Splatoon3 のデータ分析・ビジュアライゼーション環境です。
+
 ## 事前準備
 
 [Docker](https://docs.docker.jp/) がインストールされている必要があります。 各自のプラットフォームに対応する Docker をインストールしてください。
