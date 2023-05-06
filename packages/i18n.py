@@ -27,8 +27,17 @@ def get_translations(
         d.MASTER_LOBBY_PATH,
     ]
     dfs = list(map(lambda x: pd.read_csv(x)[["key", "name-ja", "name-en"]], masters))
+    dfs = dfs + [
+        pd.DataFrame(
+            [
+                {"key": "mean", "name-ja": "平均値", "name-en": "Ave."},
+                {"key": "median", "name-ja": "中央値", "name-en": "Median"},
+            ]
+        )
+    ]
     if custom_translation_df is not None:
         dfs = dfs + [custom_translation_df]
+
     df = pd.concat(dfs, ignore_index=True).set_index("key")
 
     name_key = f"name-{locale.value}"
