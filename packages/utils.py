@@ -128,3 +128,32 @@ def to_players(
     df = df.drop(columns=["value", "team"])
 
     return df
+
+
+def to_teams(battles: pd.DataFrame) -> pd.DataFrame:
+    """
+    戦績データをチーム単位のデータに変換する
+    """
+    alpha_cols = [x for x in battles.columns if re.compile("^(A|alpha)\d?-.+").match(x)]
+    bravo_cols = [x for x in battles.columns if re.compile("^(B|bravo)\d?-.+").match(x)]
+
+    df_alpha = battles.drop(columns=bravo_cols)
+    df_alpha.columns = [re.sub("^(alpha)-", "", x) for x in df_alpha.columns]
+    df_alpha = df_alpha.rename(columns=lambda x: re.sub("^A", "P", x))
+    df_alpha["team"] = "alpha"
+
+    df_bravo = battles.drop(columns=alpha_cols, axis=1)
+    df_bravo.columns = [re.sub("^(bravo)-", "", x) for x in df_bravo.columns]
+    df_bravo = df_bravo.rename(columns=lambda x: re.sub("^B", "P", x))
+    df_bravo["team"] = "bravo"
+
+    df = pd.concat([df_alpha, df_bravo], ignore_index=True)
+
+    # win カラムをチームが勝利したか否かを示す bool とする
+    df["win"] = df["win"] == df["team"]
+
+    # 不要なカラムを削除する
+    medal_cols = [x for x in battles.columns if re.compile("^medal\d-.+").match(x)]
+    df = df.drop(columns=medal_cols + ["team"])
+
+    return df
