@@ -1,7 +1,6 @@
 import re
 from matplotlib.axes._axes import Axes
 from matplotlib.figure import Figure
-import numpy as np
 import pandas as pd
 import packages.master as m
 import packages.definitions as d
