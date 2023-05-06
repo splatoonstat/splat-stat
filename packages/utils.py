@@ -8,12 +8,18 @@ import packages.definitions as d
 
 
 def get_ax_ticklabels(ax: Axes):
+    """
+    グラフの軸ラベルを返す。
+    """
     xticklabels = [x.get_text() for x in ax.xaxis.get_ticklabels()]
     yticklabels = [x.get_text() for x in ax.yaxis.get_ticklabels()]
     return xticklabels, yticklabels
 
 
 def get_ax_size(ax: Axes, fig: Figure):
+    """
+    グラフのサイズを返す。
+    """
     bbox = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
     width, height = bbox.width, bbox.height
     width *= fig.dpi
@@ -22,6 +28,9 @@ def get_ax_size(ax: Axes, fig: Figure):
 
 
 def credit(ax: Axes, fig: Figure, text: str, yratio: float = 1.0):
+    """
+    グラフにクレジット表記を追加する
+    """
     width, height = get_ax_size(ax, fig)
     x, y = 1, -36 / height * yratio
     ax.text(
