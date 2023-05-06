@@ -26,7 +26,7 @@ def get_translations(
         d.MASTER_STAGE_PATH,
         d.MASTER_LOBBY_PATH,
     ]
-    dfs = list(map(lambda x: pd.read_csv(x)[["key", "name-ja", "name-en"]], masters))
+    dfs = [pd.read_csv(x)[["key", "name-ja", "name-en"]] for x in masters]
     dfs = dfs + [
         pd.DataFrame(
             [

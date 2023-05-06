@@ -56,7 +56,7 @@ def load_battles(
     options = list(filter(lambda x: x["use"], options))
 
     if len(options) > 0:
-        sqls = list(map(lambda x: x["sql"], options))
+        sqls = [x["sql"] for x in options]
         sql += " where " + " and ".join(sqls)
     df = pd.read_sql(sql=sql, con=engine)
 

@@ -30,7 +30,7 @@ def _get_csv_file_paths(
     # HTML をパースしてリンクを収集する
     soup = BeautifulSoup(r.content, "html.parser")
     anchors = soup.find_all("a")
-    paths = list(map(lambda x: x.get("href"), anchors))
+    paths = [x.get("href") for x in anchors]
 
     # 収集したリンクから csv ファイルのリストを抽出する
     csv_paths = list(filter(lambda x: re.match(rf"{current_path}.+\.csv", x), paths))
@@ -130,7 +130,7 @@ def init_db():
             zip.extractall(extract_dir)
 
     # 展開されたディレクトリ内の csv ファイルから、未保存のファイルのリストを抽出する
-    csv_paths = list(map(lambda x: f"{dirname}/{x}", os.listdir(path=dirname)))
+    csv_paths = [f"{dirname}/{x}" for x in os.listdir(path=dirname)]
     non_existing_files = list(filter(lambda x: not _check_csv_exist(x), csv_paths))
 
     # csv を読み込み DB へ書き込む
@@ -152,7 +152,7 @@ def reset_db():
 
     # DB に空のテーブルを作成する
     dirname = d.INIT_DIR
-    sql_files = list(map(lambda x: f"{dirname}/{x}", os.listdir(dirname)))
+    sql_files = [f"{dirname}/{x}" for x in os.listdir(dirname)]
 
     for sql_file in sql_files:
         with open(sql_file) as file:

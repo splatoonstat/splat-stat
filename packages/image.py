@@ -34,12 +34,12 @@ def download_images(delay: int = 3):
     r = requests.get(d.STATINK_API_WEAPON_INFO_URL)
     soup = BeautifulSoup(r.content, "html.parser")
     images = soup.select("tr img")
-    paths = list(map(lambda x: x.get("src"), images))
+    paths = [x.get("src") for x in images]
 
     # メインウェポン、サブウェポン、スペシャルウェポンの画像パスのみを抽出する
     paths = [x for x in paths if re.match("^/assets/.+/(main|sub|special)/.+\.png", x)]
     # クエリパラメータは除外する
-    paths = list(map(lambda x: x[: x.find("?")], paths))
+    paths = [x[: x.find("?")] for x in paths]
     # 重複した画像パスは除外する
     paths = list(set(paths))
     # 既に取得済みの画像は除外する
