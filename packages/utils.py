@@ -38,84 +38,36 @@ def credit(ax: Axes, fig: Figure, text: str, yratio: float = 1.0):
 def to_players(
     battles: pd.DataFrame,
     exclude_A1: bool = True,
-    additional_columns: list[str] = [],
 ) -> pd.DataFrame:
     """
     戦績データをプレイヤー単位のデータに変換する
     """
-    battle_cols = [
-        "season",
-        "period",
-        "date",
-        "game-ver",
-        "lobby",
-        "mode",
-        "stage",
-        "time",
-        "win",
-        "knockout",
-        "rank",
-        "power",
-    ] + additional_columns
+    team_cols = [x for x in battles.columns if re.compile("^(alpha|bravo)-.+").match(x)]
     player_cols = [x for x in battles.columns if re.compile("^[AB]\d-.+").match(x)]
-    if exclude_A1:
-        player_cols = [x for x in player_cols if not re.compile("^A1-.+").match(x)]
     player_names = [
         x[:2] for x in player_cols if re.compile("^[AB]\d-weapon$").match(x)
     ]
-    keys = [x[3:] for x in battles.columns if re.compile("^A1-.+").match(x)]
+    if exclude_A1:
+        player_names = [x for x in player_names if x != "A1"]
 
-    # 共通データのカラムとプレイヤーデータのカラムに分解する
-    df_common = battles[battle_cols].copy()
-    df_player = battles[player_cols].copy().fillna("nan")
+    def player_name_to_df(player_name: str) -> pd.DataFrame:
+        team = "alpha" if player_name[0] == "A" else "bravo"
+        exclude_team_cols = [x for x in team_cols if not team in x]
+        exclude_player_cols = [x for x in player_cols if x[:2] != player_name]
 
-    # 各プレイヤーの情報を1つのカラムに結合する
-    for player_name in player_names:
-        df_player[player_name] = (
-            df_player[f"{player_name}-{keys[0]}"].astype(str)
-            + "/"
-            + df_player[f"{player_name}-{keys[1]}"].astype(str)
-            + "/"
-            + df_player[f"{player_name}-{keys[2]}"].astype(str)
-            + "/"
-            + df_player[f"{player_name}-{keys[3]}"].astype(str)
-            + "/"
-            + df_player[f"{player_name}-{keys[4]}"].astype(str)
-            + "/"
-            + df_player[f"{player_name}-{keys[5]}"].astype(str)
-            + "/"
-            + df_player[f"{player_name}-{keys[6]}"].astype(str)
-            + "/"
-            + df_player[f"{player_name}-{keys[7]}"].astype(str)
-        )
-    df_player = df_player.drop(columns=player_cols)
+        exclude_cols = exclude_team_cols + exclude_player_cols
+        df = battles.drop(columns=exclude_cols)
 
-    # 結合したカラムを加えて melt する
-    df = pd.concat([df_common, df_player], axis=1)
-    df_melted = df.melt(id_vars=battle_cols, var_name="player")
+        df = df.rename(columns=lambda x: re.sub("^[AB]\d-", "", x))
+        df = df.rename(columns=lambda x: re.sub("^(alpha|bravo)", "team", x))
+        df["player"] = player_name
+        df["team"] = team
+        return df
 
-    # 各プレイヤーのカラムを分離して元に戻す
-    df_split = (
-        df_melted["value"]
-        .str.split("/", expand=True)
-        .replace("nan", np.nan)
-        .set_axis(keys, axis=1)
-        .astype(
-            {
-                "kill-assist": "int64",
-                "kill": "int64",
-                "assist": "int64",
-                "death": "int64",
-                "special": "int64",
-                "inked": "int64",
-            }
-        )
-    )
-
-    df = pd.concat([df_melted, df_split], axis=1)
+    dfs = [player_name_to_df(x) for x in player_names]
+    df = pd.concat(dfs, ignore_index=True)
 
     # win カラムをプレイヤーが勝利したか否かを示す bool とする
-    df["team"] = df["player"].map(lambda x: "alpha" if x[0] == "A" else "bravo")
     df["win"] = df["win"] == df["team"]
 
     # サブ、スペシャル、ブキ種のカラムを追加する
@@ -125,7 +77,8 @@ def to_players(
     df["weapon-type"] = df["weapon"].map(lambda x: main_master.at[x, "type-key"])
 
     # 不要なカラムを削除する
-    df = df.drop(columns=["value", "team"])
+    medal_cols = [x for x in battles.columns if re.compile("^medal\d-.+").match(x)]
+    df = df.drop(columns=medal_cols)
 
     return df
 
@@ -134,26 +87,32 @@ def to_teams(battles: pd.DataFrame) -> pd.DataFrame:
     """
     戦績データをチーム単位のデータに変換する
     """
-    alpha_cols = [x for x in battles.columns if re.compile("^(A|alpha)\d?-.+").match(x)]
-    bravo_cols = [x for x in battles.columns if re.compile("^(B|bravo)\d?-.+").match(x)]
+    team_cols = [x for x in battles.columns if re.compile("^(alpha|bravo)-.+").match(x)]
+    player_cols = [x for x in battles.columns if re.compile("^[AB]\d-.+").match(x)]
+    team_names = [
+        x[:5] for x in team_cols if re.compile("^(alpha|bravo)-inked").match(x)
+    ]
 
-    df_alpha = battles.drop(columns=bravo_cols)
-    df_alpha.columns = [re.sub("^(alpha)-", "", x) for x in df_alpha.columns]
-    df_alpha = df_alpha.rename(columns=lambda x: re.sub("^A", "P", x))
-    df_alpha["team"] = "alpha"
+    def team_name_to_df(team_name: str) -> pd.DataFrame:
+        exclude_team_cols = [x for x in team_cols if not team_name in x]
+        exclude_player_cols = [x for x in player_cols if x[:1] != team_name[0].upper()]
 
-    df_bravo = battles.drop(columns=alpha_cols, axis=1)
-    df_bravo.columns = [re.sub("^(bravo)-", "", x) for x in df_bravo.columns]
-    df_bravo = df_bravo.rename(columns=lambda x: re.sub("^B", "P", x))
-    df_bravo["team"] = "bravo"
+        exclude_cols = exclude_team_cols + exclude_player_cols
+        df = battles.drop(columns=exclude_cols)
 
-    df = pd.concat([df_alpha, df_bravo], ignore_index=True)
+        df = df.rename(columns=lambda x: re.sub("^[AB]", "P", x))
+        df = df.rename(columns=lambda x: re.sub("^(alpha|bravo)", "team", x))
+        df["team"] = team_name
+        return df
+
+    dfs = [team_name_to_df(x) for x in team_names]
+    df = pd.concat(dfs, ignore_index=True)
 
     # win カラムをチームが勝利したか否かを示す bool とする
     df["win"] = df["win"] == df["team"]
 
     # 不要なカラムを削除する
     medal_cols = [x for x in battles.columns if re.compile("^medal\d-.+").match(x)]
-    df = df.drop(columns=medal_cols + ["team"])
+    df = df.drop(columns=medal_cols)
 
     return df
