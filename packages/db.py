@@ -53,7 +53,7 @@ def load_battles(
         {"use": date_from is not None, "sql": f"date >= '{date_from}'"},
         {"use": date_to is not None, "sql": f"date <= '{date_to}'"},
     ]
-    options = list(filter(lambda x: x["use"], options))
+    options = [x for x in options if x["use"]]
 
     if len(options) > 0:
         sqls = [x["sql"] for x in options]

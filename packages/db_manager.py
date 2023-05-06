@@ -33,9 +33,9 @@ def _get_csv_file_paths(
     paths = [x.get("href") for x in anchors]
 
     # 収集したリンクから csv ファイルのリストを抽出する
-    csv_paths = list(filter(lambda x: re.match(rf"{current_path}.+\.csv", x), paths))
+    csv_paths = [x for x in paths if re.match(rf"{current_path}.+\.csv", x)]
     # 収集したリンクから下層ディレクトリのリストを抽出する
-    dir_paths = list(filter(lambda x: re.match(rf"{current_path}.+/", x), paths))
+    dir_paths = [x for x in paths if re.match(rf"{current_path}.+/", x)]
 
     # 下層ディレクトリがあれば再帰的に csv ファイルを取得する
     for dir_path in dir_paths:
@@ -98,7 +98,7 @@ def update_db(delay: int = 3):
     未保存のデータを取得して DB へ書き込む。
     """
     csv_paths = _get_csv_file_paths()
-    non_existing_files = list(filter(lambda x: not _check_csv_exist(x), csv_paths))
+    non_existing_files = [x for x in csv_paths if not _check_csv_exist(x)]
 
     # csv をダウンロードして DB へ書き込む
     file_num = len(non_existing_files)
@@ -131,7 +131,7 @@ def init_db():
 
     # 展開されたディレクトリ内の csv ファイルから、未保存のファイルのリストを抽出する
     csv_paths = [f"{dirname}/{x}" for x in os.listdir(path=dirname)]
-    non_existing_files = list(filter(lambda x: not _check_csv_exist(x), csv_paths))
+    non_existing_files = [x for x in csv_paths if not _check_csv_exist(x)]
 
     # csv を読み込み DB へ書き込む
     file_num = len(non_existing_files)
