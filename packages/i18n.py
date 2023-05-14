@@ -72,10 +72,10 @@ def duration_to_str(
             return f"{d1}〜{d2}"
 
 
-def battles_to_duration_str(battles: pd.DataFrame, locale: Locale = Locale.JA) -> str:
+def data_to_duration_str(data: pd.DataFrame, locale: Locale = Locale.JA) -> str:
     """
-    battles の開催期間を locale に合った文字列に変換し返却する。
+    data の開催期間を locale に合った文字列に変換し返却する。
     """
-    date_from = battles["date"].min()
-    date_to = battles["date"].max()
+    date_from = data["date"].min()
+    date_to = data["date"].max()
     return duration_to_str(date_from, date_to, locale=locale)
