@@ -1,81 +1,73 @@
+import re
 import datetime as dt
+from string import Template
 from enum import Enum
 from typing import Optional
 import pandas as pd
-import packages.definitions as d
+from packages.master import Master, load_master
 
 
 class Locale(Enum):
     JA = "ja"
     EN = "en"
 
-
-def get_translations(
-    custom_translation_df: Optional[pd.DataFrame] = None, locale: Locale = Locale.JA
-) -> pd.DataFrame:
-    """
-    翻訳用の辞書を返却する。
-    custom_translation_df はカスタム翻訳用の DataFrame オブジェクト。
-    custom_translation_df は `key`, `name-ja`, `name-en` のカラムを持つ必要がある。
-    """
+def _create_dictionary():
     masters = [
-        d.MASTER_MAIN_WEAPON_PATH,
-        d.MASTER_SUB_WEAPON_PATH,
-        d.MASTER_SPECIAL_WEAPON_PATH,
-        d.MASTER_RULE_PATH,
-        d.MASTER_STAGE_PATH,
-        d.MASTER_LOBBY_PATH,
+        Master.MAIN_WEAPON,
+        Master.SUB_WEAPON,
+        Master.SPECIAL_WEAPON,
+        Master.RULE,
+        Master.STAGE,
+        Master.LOBBY,
     ]
-    dfs = [pd.read_csv(x)[["key", "name-ja", "name-en"]] for x in masters]
-    dfs = dfs + [
-        pd.DataFrame(
-            [
-                {"key": "mean", "name-ja": "平均値", "name-en": "Ave."},
-                {"key": "median", "name-ja": "中央値", "name-en": "Median"},
-            ]
-        )
-    ]
-    if custom_translation_df is not None:
-        dfs = dfs + [custom_translation_df]
-
-    df = pd.concat(dfs, ignore_index=True).set_index("key")
-
-    name_key = f"name-{locale.value}"
-    return df[name_key].to_dict()
+    dfs = [load_master(x).reset_index()[["key", "name-ja", "name-en"]] for x in masters]
+    df = pd.concat(dfs, ignore_index=True).rename(columns=lambda x: re.sub("^name-", "", x)).set_index("key")
+    dictionary = df.to_dict(orient="index")
+    return dictionary
 
 
-def date_to_str(date: dt.date, locale: Locale = Locale.JA) -> str:
-    """
-    date オブジェクトを locale に合った文字列に変換し返却する。
-    """
-    match locale:
-        case Locale.JA:
-            format = "%-m/%-d"
-        case Locale.EN:
-            format = "%b. %-d"
-        case _:
-            format = "%-m/%-d"
-    return date.strftime(format)
+class Translator:
+    def __init__(self, locale: Optional[Locale] = Locale.JA):
+        self.set_locale(locale)
+        self._dictionary = _create_dictionary()
+        self.add("mean", "平均値", "Avg.")
 
+    def set_locale(self, locale: Locale):
+        self.locale = locale
 
-def duration_to_str(
-    date_from: dt.date, date_to: dt.date, locale: Locale = Locale.JA
-) -> str:
-    d1 = date_to_str(date_from, locale=locale)
-    d2 = date_to_str(date_to, locale=locale)
-    match locale:
-        case Locale.JA:
-            return f"{d1}〜{d2}"
-        case Locale.EN:
-            return f"{d1} - {d2}"
-        case _:
-            return f"{d1}〜{d2}"
+    def t(self, key: str, **kwargs) -> str:
+        locale = kwargs.pop("locale", self.locale)
+        translation = self._dictionary[key][locale.value]
+        return Template(translation).substitute(**kwargs)
 
+    def add(self, key: str, label_ja: str, label_en: str):
+        self._dictionary |= { key: { "ja": label_ja, "en": label_en } }
 
-def data_to_duration_str(data: pd.DataFrame, locale: Locale = Locale.JA) -> str:
-    """
-    data の開催期間を locale に合った文字列に変換し返却する。
-    """
-    date_from = data["date"].min()
-    date_to = data["date"].max()
-    return duration_to_str(date_from, date_to, locale=locale)
+    def t_date(self, date: dt.date, locale: Optional[Locale] = None) -> str:
+        locale = locale or self.locale
+        match locale:
+            case Locale.JA:
+                format = "%-m/%-d"
+            case Locale.EN:
+                format = "%b. %-d"
+            case _:
+                format = "%-m/%-d"
+        return date.strftime(format)
+
+    def t_duration(self, date_from: dt.date, date_to: dt.date, locale: Optional[Locale] = None) -> str:
+        locale = locale or self.locale
+        d1 = self.t_date(date_from, locale=locale)
+        d2 = self.t_date(date_to, locale=locale)
+        match locale:
+            case Locale.JA:
+                return f"{d1}〜{d2}"
+            case Locale.EN:
+                return f"{d1} - {d2}"
+            case _:
+                return f"{d1}〜{d2}"
+
+    def t_data_duration(self, data: pd.DataFrame, locale: Optional[Locale] = None) -> str:
+        locale = locale or self.locale
+        date_from = data["date"].min()
+        date_to = data["date"].max()
+        return self.t_duration(date_from, date_to, locale=locale)
