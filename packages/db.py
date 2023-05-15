@@ -12,7 +12,7 @@ connection_config = {
     "user": "postgres",
     "password": "",
     "host": "db",
-    "port": "5432",
+    "port": "5433",
     "database": "postgres",
 }
 engine = sa.create_engine(
