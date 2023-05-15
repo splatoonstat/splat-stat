@@ -65,3 +65,34 @@ def load_battles(
         df = df.replace("heroshooter_replica", "sshooter")
 
     return df
+
+
+def save_works(works: pd.DataFrame):
+    """
+    サーモンランデータを DB に格納する。
+    """
+    works.to_sql("works", con=engine, if_exists="append", index=False)
+
+
+def load_works(
+    lobby: Optional[d.SalmonLobby] = None,
+    date_from: Optional[dt.date] = None,
+    date_to: Optional[dt.date] = None,
+) -> pd.DataFrame:
+    """
+    DB からサーモンランデータを読み込んで DataFrame として返却する。
+    """
+    sql = "select * from works"
+    options = [
+        {"use": lobby is not None, "sql": f"lobby = '{lobby and lobby.value}'"},
+        {"use": date_from is not None, "sql": f"date >= '{date_from}'"},
+        {"use": date_to is not None, "sql": f"date <= '{date_to}'"},
+    ]
+    options = [x for x in options if x["use"]]
+
+    if len(options) > 0:
+        sqls = [x["sql"] for x in options]
+        sql += " where " + " and ".join(sqls)
+    df = pd.read_sql(sql=sql, con=engine)
+
+    return df

@@ -31,6 +31,10 @@ STATINK_DOWNLOAD_BATTLE_PATH = "/splatoon-3/battle-results-csv/"
 STATINK_DOWNLOAD_BATTLE_ZIP_URL = (
     f"{STATINK_DOWNLOAD_BASE_URL}{STATINK_DOWNLOAD_BATTLE_PATH}battle-results-csv.zip"
 )
+STATINK_DOWNLOAD_SALMON_PATH = "/splatoon-3/salmon-results-csv/"
+STATINK_DOWNLOAD_SALMON_ZIP_URL = (
+    f"{STATINK_DOWNLOAD_BASE_URL}{STATINK_DOWNLOAD_SALMON_PATH}salmon-results-csv.zip"
+)
 
 
 class Lobby(Enum):
@@ -106,3 +110,9 @@ COLOR_PAIR_ORDER = [
 ]
 
 CREDIT = "@splatoon_stat"
+
+
+class SalmonLobby(Enum):
+    NORMAL = "normal"
+    BIG_RUN = "big_run"
+    EGGSTRA_WORK = "eggstra_work"
