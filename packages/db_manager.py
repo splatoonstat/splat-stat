@@ -92,9 +92,9 @@ def _save_battles(csv_path: str):
     db.save_battles(battles=battles)
 
 
-def update_db(delay: int = 3):
+def update_battles(delay: int = 3):
     """
-    stat.ink のダウンロードページから csv ファイルのリストを取得し、
+    stat.ink のダウンロードページから戦績の csv ファイルのリストを取得し、
     未保存のデータを取得して DB へ書き込む。
     """
     csv_paths = _get_csv_file_paths()
@@ -109,9 +109,9 @@ def update_db(delay: int = 3):
         _save_battles(url)
 
 
-def init_db():
+def init_battles():
     """
-    stat.ink のダウンロードページから zip ファイルを取得し、
+    stat.ink のダウンロードページから戦績の zip ファイルを取得し、
     解凍してできた csv ファイルからデータを DB へ書き込む。
     """
     zip_url = d.STATINK_DOWNLOAD_BATTLE_ZIP_URL
@@ -143,9 +143,9 @@ def init_db():
     shutil.rmtree(dirname)
 
 
-def reset_db():
+def reset_battles():
     """
-    DB に空のテーブルを作り直す
+    battles テーブルを削除し空のテーブルを作り直す
     """
     # DB のテーブルを削除する
     db.execute_sql("drop table if exists battles")
