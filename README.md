@@ -36,12 +36,27 @@ docker compose exec app python scripts/init_battles.py
 docker compose exec app python scripts/update_battles.py
 ```
 
-#### データベースをリセットする
+#### テーブルをリセットする
 
 以下のコマンドを実行するとデータベースの `battles` テーブルを空の状態に戻します。
 
 ```sh
 docker compose exec app python scripts/reset_battles.py
+```
+
+### サーモンランデータを登録する
+
+サーモンランデータは `works` テーブルを使用します。 管理方法は戦績データと同様です。
+
+```sh
+# 初期データの登録
+docker compose exec app python scripts/init_works.py
+
+# データの更新
+docker compose exec app python scripts/update_works.py
+
+# テーブルのリセット
+docker compose exec app python scripts/reset_works.py
 ```
 
 ## マスターデータの取得
