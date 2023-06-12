@@ -7,6 +7,7 @@ import json
 from enum import Enum
 import requests
 import pandas as pd
+from bs4 import BeautifulSoup
 import packages.definitions as d
 
 
@@ -57,6 +58,27 @@ def update_weapon_master():
         .drop_duplicates()
     )
     weapon_type.to_csv(d.MASTER_WEAPON_TYPE_PATH, index=False)
+
+
+def update_weapon_pool_master():
+    r = requests.get(d.STATINK_API_WEAPON_INFO_URL)
+    soup = BeautifulSoup(r.content, "html.parser")
+    table = soup.find("table")
+    header_texts = [x.text for x in table.select("thead th")]
+
+    pool_th_index = header_texts.index("X")
+    key_th_index = header_texts.index("key")
+
+    trs = table.select("tbody tr")
+
+    def get_weapon_pool(tr) -> tuple[str, str]:
+        tds = tr.find_all("td", recursive=False)
+        pool = tds[pool_th_index].get("title").lower().replace(" ", "")
+        key = tds[key_th_index].text
+        return { "key": key, "pool": pool }
+
+    weapon_pool = pd.DataFrame([get_weapon_pool(x) for x in trs])
+    weapon_pool.to_csv(d.MASTER_WEAPON_POOL_PATH, index=False)
 
 
 def update_rule_master():
@@ -121,6 +143,7 @@ def update_masters():
     すべてのマスターデータを取得する。
     """
     update_weapon_master()
+    update_weapon_pool_master()
     update_rule_master()
     update_stage_master()
     update_lobby_master()
@@ -131,6 +154,7 @@ class Master(Enum):
     SUB_WEAPON = "sub_weapon"
     SPECIAL_WEAPON = "special_weapon"
     WEAPON_TYPE = "weapon_type"
+    WEAPON_POOL = "weapon_pool"
     RULE = "rule"
     STAGE = "stage"
     LOBBY = "lobby"
@@ -149,6 +173,8 @@ def load_master(target: Master) -> pd.DataFrame:
             return pd.read_csv(d.MASTER_SPECIAL_WEAPON_PATH, index_col="key")
         case Master.WEAPON_TYPE:
             return pd.read_csv(d.MASTER_WEAPON_TYPE_PATH, index_col="key")
+        case Master.WEAPON_POOL:
+            return pd.read_csv(d.MASTER_WEAPON_POOL_PATH, index_col="key")
         case Master.RULE:
             return pd.read_csv(d.MASTER_RULE_PATH, index_col="key")
         case Master.STAGE:
