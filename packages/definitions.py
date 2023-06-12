@@ -36,6 +36,11 @@ STATINK_DOWNLOAD_SALMON_ZIP_URL = (
     f"{STATINK_DOWNLOAD_BASE_URL}{STATINK_DOWNLOAD_SALMON_PATH}salmon-results-csv.zip"
 )
 
+# splatoonwiki.org
+SPLATOONWIKIORG_WEAPON_URL = (
+    "https://splatoonwiki.org/wiki/List_of_weapons_in_Splatoon_3"
+)
+
 
 class Lobby(Enum):
     REGULAR = "regular"

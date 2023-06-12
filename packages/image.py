@@ -1,21 +1,25 @@
 """
 画像データを管理する。
 """
+from typing import Optional
 import os
 import re
 import time
 import requests
 from bs4 import BeautifulSoup
+from packages.master import load_master, Master
 import packages.definitions as d
 
 
-def _download_file_to_dir(url: str, dst_dir: str):
+def _download_file_to_dir(url: str, dst_dir: str, filename: Optional[str]):
     """
     URL から画像をダウンロードし指定のディレクトリに保存する。
     """
     os.makedirs(dst_dir, exist_ok=True)
 
-    file_path = os.path.join(dst_dir, os.path.basename(url))
+    _filename = filename if filename is not None else os.path.basename(url)
+    file_path = os.path.join(dst_dir, _filename)
+
     try:
         r = requests.get(url)
         with open(file_path, mode="wb") as file:
@@ -54,6 +58,40 @@ def download_images(delay: int = 3):
         url = d.STATINK_BASE_URL + path
         print(f"({i+1}/{file_num}) download {url}")
         _download_file_to_dir(url, image_dir)
+
+
+def download_images_from_splatoonwikiorg(delay: int = 3):
+    image_dir = d.IMAGES_DIR
+
+    r = requests.get(d.SPLATOONWIKIORG_WEAPON_URL)
+    soup = BeautifulSoup(r.content, "html.parser")
+    table = soup.find("table")
+    imgs = table.find_all("img")
+
+    main_weapon_imgs = [x for x in imgs if "Weapon Main" in x.get("alt")]
+    sub_weapon_imgs = [x for x in imgs if "Weapon Sub" in x.get("alt")]
+    special_weapon_imgs = [x for x in imgs if "Weapon Special" in x.get("alt")]
+
+    def imgs_download(imgs: list, master_key: Master, regex: str):
+        df = load_master(master_key)
+        for img in imgs:
+            alt = img.get("alt")
+            src = img.get("src")
+            url = "https:" + re.sub("60px", "36px", src)
+            name = re.search(regex, alt).group(1)
+            key = df[df["name-en"] == name].index[0]
+
+            filename = f"{key}.png"
+            path = os.path.join(image_dir, filename)
+
+            if not os.path.exists(path):
+                time.sleep(delay)
+                print(f"download to {path}")
+                _download_file_to_dir(url, image_dir, filename)
+
+    imgs_download(main_weapon_imgs, Master.MAIN_WEAPON, "Main (.+) Flat")
+    imgs_download(sub_weapon_imgs, Master.SUB_WEAPON, "Sub (.+) Flat")
+    imgs_download(special_weapon_imgs, Master.SPECIAL_WEAPON, "Special (.+)\.png")
 
 
 def get_image_path(key: str) -> str:
