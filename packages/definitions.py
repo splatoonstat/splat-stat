@@ -53,6 +53,16 @@ class Lobby(Enum):
     EVENT = "event"
 
 
+class Color(Enum):
+    BACKGROUD = "#292e35"
+    REGULAR = "#eaff3e"
+    BANKARA = "#f54910"
+    XMATCH = "#25c593"
+    SPLATFEST = "#603aff"
+    EVENT = "#ea4074"
+    SALMON = "#df4b33"
+
+
 class Mode(Enum):
     NAWABARI = "nawabari"
     AREA = "area"
