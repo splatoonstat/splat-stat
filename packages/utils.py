@@ -84,6 +84,11 @@ def to_players(
     df["special-weapon"] = df["weapon"].map(lambda x: main_master.at[x, "special-key"])
     df["weapon-type"] = df["weapon"].map(lambda x: main_master.at[x, "type-key"])
 
+    # 1分辺りのリザルトのカラムを追加する
+    base_result_cols = ["kill-assist", "kill", "assist", "death", "special", "inked"]
+    for col in base_result_cols:
+        df[f"{col}-m"] = df[col] / df["time"] * 60
+
     # 不要なカラムを削除する
     medal_cols = [x for x in battles.columns if re.compile("^medal\d-.+").match(x)]
     df = df.drop(columns=medal_cols)
