@@ -44,6 +44,7 @@ class Lobby(Enum):
     XMATCH = "xmatch"
     SPLATFEST_OPEN = "splatfest_open"
     SPLATFEST_CHALLENGE = "splatfest_challenge"
+    EVENT = "event"
 
 
 class Mode(Enum):

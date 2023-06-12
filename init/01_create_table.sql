@@ -90,7 +90,8 @@ create table if not exists battles (
     "medal2-grade" varchar(15),
     "medal2-name" varchar(255),
     "medal3-grade" varchar(15),
-    "medal3-name" varchar(255)
+    "medal3-name" varchar(255),
+    event varchar(255)
 );
 
 create table if not exists works (
