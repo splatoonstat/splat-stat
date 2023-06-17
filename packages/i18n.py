@@ -31,6 +31,9 @@ class Translator:
         self.set_locale(locale)
         self._dictionary = _create_dictionary()
         self.add("mean", "平均値", "Avg.")
+        self.add("New Season Challenge", "新シーズン開幕記念カップ", "New Season Challenge")
+        self.add("Too Many Trizookas!", "ウルトラショット祭り", "Too Many Trizookas")
+        self.add("The Sheldon Sampler Challenge", "いろんなブキをかわいがるブキチ杯", "The Sheldon Sampler Challenge")
 
     def set_locale(self, locale: Locale):
         self.locale = locale

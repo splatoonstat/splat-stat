@@ -54,7 +54,7 @@ class Lobby(Enum):
 
 
 class Color(Enum):
-    BACKGROUD = "#292e35"
+    BACKGROUND = "#292e35"
     REGULAR = "#eaff3e"
     BANKARA = "#f54910"
     XMATCH = "#25c593"
