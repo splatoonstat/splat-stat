@@ -1,3 +1,4 @@
+import json
 import re
 from matplotlib.axes._axes import Axes
 from matplotlib.figure import Figure
@@ -40,6 +41,34 @@ def credit(ax: Axes, fig: Figure, text: str, yratio: float = 1.0):
         va="top",
         fontsize=10,
         transform=ax.transAxes,
+    )
+
+
+def add_ability_columns_to_players(players: pd.DataFrame) -> pd.DataFrame:
+    """
+    プレイヤー単位のデータにギアパワーのカラムを追加する
+    """
+    ability_master = m.load_master(m.Master.ABILITY)
+    default_abilities = {
+        row["key"]: False if row["primary-only"] else 0
+        for _, row in ability_master.reset_index().iterrows()
+    }
+
+    def complement_abilities(abilities_json) -> dict:
+        return {
+            **default_abilities,
+            **abilities_json,
+        }
+
+    players["full-abilities"] = (
+        players["abilities"].apply(json.loads).map(complement_abilities)
+    )
+
+    df_full_abilities = pd.json_normalize(players["full-abilities"]).rename(
+        columns=lambda x: f"ability-{x}"
+    )
+    return pd.concat(
+        [players.drop(columns="full-abilities"), df_full_abilities], axis=1
     )
 
 
@@ -88,6 +117,9 @@ def to_players(
     base_result_cols = ["kill-assist", "kill", "assist", "death", "special", "inked"]
     for col in base_result_cols:
         df[f"{col}-m"] = df[col] / df["time"] * 60
+
+    # ギアパワーのカラムを追加する
+    df = add_ability_columns_to_players(df)
 
     # 不要なカラムを削除する
     medal_cols = [x for x in battles.columns if re.compile("^medal\d-.+").match(x)]

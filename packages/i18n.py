@@ -19,6 +19,7 @@ def _create_dictionary():
         Master.RULE,
         Master.STAGE,
         Master.LOBBY,
+        Master.ABILITY,
     ]
     dfs = [load_master(x).reset_index()[["key", "name-ja", "name-en"]] for x in masters]
     df = pd.concat(dfs, ignore_index=True).rename(columns=lambda x: re.sub("^name-", "", x)).set_index("key")

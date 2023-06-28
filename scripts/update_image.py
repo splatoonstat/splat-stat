@@ -1,8 +1,12 @@
-from packages.image import download_images_from_splatoonwikiorg
+from packages.image import (
+    download_images_from_splatoonwikiorg,
+    download_ability_images_from_splatoonwikiorg,
+)
 
 
 def main():
     download_images_from_splatoonwikiorg()
+    download_ability_images_from_splatoonwikiorg()
 
 
 if __name__ == "__main__":

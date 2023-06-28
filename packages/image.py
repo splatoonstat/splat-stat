@@ -89,9 +89,34 @@ def download_images_from_splatoonwikiorg(delay: int = 3):
                 print(f"download to {path}")
                 _download_file_to_dir(url, image_dir, filename)
 
-    imgs_download(main_weapon_imgs, Master.MAIN_WEAPON, "Main (.+) Flat")
+    imgs_download(main_weapon_imgs, Master.MAIN_WEAPON, "Main (.+) 2D")
     imgs_download(sub_weapon_imgs, Master.SUB_WEAPON, "Sub (.+) Flat")
     imgs_download(special_weapon_imgs, Master.SPECIAL_WEAPON, "Special (.+)\.png")
+
+
+def download_ability_images_from_splatoonwikiorg(delay: int = 3):
+    image_dir = d.IMAGES_DIR
+
+    r = requests.get(d.SPLATOONWIKIORG_ABILITY_URL)
+    soup = BeautifulSoup(r.content, "html.parser")
+    imgs = soup.select("table.sitecolor-s3 img")
+    ability_imgs = [x for x in imgs if "S3 Ability" in x.get("alt")]
+    df = load_master(Master.ABILITY)
+
+    for img in ability_imgs:
+        alt = img.get("alt")
+        src = img.get("src")
+        url = "https:" + re.sub("24px", "36px", src)
+        name = re.search("S3 Ability (.+)\.png", alt).group(1)
+        key = df[df["name-en"] == name].index[0]
+
+        filename = f"{key}.png"
+        path = os.path.join(image_dir, filename)
+
+        if not os.path.exists(path):
+            time.sleep(delay)
+            print(f"download to {path}")
+            _download_file_to_dir(url, image_dir, filename)
 
 
 def get_image_path(key: str) -> str:

@@ -138,6 +138,24 @@ def update_lobby_master():
     lobby.to_csv(d.MASTER_LOBBY_PATH, index=False)
 
 
+def update_ability_master():
+    os.makedirs(d.MASTERS_DIR, exist_ok=True)
+    r = requests.get(d.STATINK_API_ABILITY_URL)
+    ability_json = json.loads(r.content)
+
+    def to_ability_obj(data: object) -> object:
+        return {
+            "key": data["key"],
+            "name-ja": data["name"]["ja_JP"],
+            "name-en": data["name"]["en_US"],
+            "primary-only": data["primary_only"],
+        }
+
+    ability = pd.DataFrame(list(map(to_ability_obj, ability_json)))
+    ability.to_csv(d.MASTER_ABILITY_PATH, index=False)
+
+
+
 def update_masters():
     """
     すべてのマスターデータを取得する。
@@ -147,6 +165,7 @@ def update_masters():
     update_rule_master()
     update_stage_master()
     update_lobby_master()
+    update_ability_master()
 
 
 class Master(Enum):
@@ -158,6 +177,7 @@ class Master(Enum):
     RULE = "rule"
     STAGE = "stage"
     LOBBY = "lobby"
+    ABILITY = "ability"
 
 
 def load_master(target: Master) -> pd.DataFrame:
@@ -181,5 +201,7 @@ def load_master(target: Master) -> pd.DataFrame:
             return pd.read_csv(d.MASTER_STAGE_PATH, index_col="key")
         case Master.LOBBY:
             return pd.read_csv(d.MASTER_LOBBY_PATH, index_col="key")
+        case Master.ABILITY:
+            return pd.read_csv(d.MASTER_ABILITY_PATH, index_col="key")
         case _:
             raise ValueError("target not found")
