@@ -35,6 +35,8 @@ class Translator:
         self.add("New Season Challenge", "新シーズン開幕記念カップ", "New Season Challenge")
         self.add("Too Many Trizookas!", "ウルトラショット祭り", "Too Many Trizookas")
         self.add("The Sheldon Sampler Challenge", "いろんなブキをかわいがるブキチ杯", "The Sheldon Sampler Challenge")
+        self.add("Monthly Challenge", "ツキイチ・イベントマッチ", "Monthly Challenge")
+        self.add("Foggy Notion", "霧の中の戦い", "Foggy Notion")
 
     def set_locale(self, locale: Locale):
         self.locale = locale
