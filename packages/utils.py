@@ -161,3 +161,18 @@ def to_teams(battles: pd.DataFrame) -> pd.DataFrame:
     df = df.drop(columns=medal_cols)
 
     return df
+
+
+def to_abilities(players: pd.DataFrame) -> pd.DataFrame:
+    ability_cols = [x for x in players.columns if re.compile("^ability-.+").match(x)]
+
+    def ability_to_df(ability_col: str) -> pd.DataFrame:
+        exclude_cols = [x for x in ability_cols if x != ability_col]
+        df = players.drop(columns=exclude_cols)
+        df = df.rename(columns={ ability_col: "ability-point"})
+        df["ability"] = re.sub("^ability-", "", ability_col)
+        return df
+
+    dfs = [ability_to_df(x) for x in ability_cols]
+    df = pd.concat(dfs, ignore_index=True)
+    return df
