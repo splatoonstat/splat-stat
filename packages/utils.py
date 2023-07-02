@@ -75,6 +75,7 @@ def add_ability_columns_to_players(players: pd.DataFrame) -> pd.DataFrame:
 def to_players(
     battles: pd.DataFrame,
     exclude_A1: bool = True,
+    append_abilities: bool = False,
 ) -> pd.DataFrame:
     """
     戦績データをプレイヤー単位のデータに変換する
@@ -118,8 +119,9 @@ def to_players(
     for col in base_result_cols:
         df[f"{col}-m"] = df[col] / df["time"] * 60
 
-    # ギアパワーのカラムを追加する
-    df = add_ability_columns_to_players(df)
+    if append_abilities:
+        # ギアパワーのカラムを追加する
+        df = add_ability_columns_to_players(df)
 
     # 不要なカラムを削除する
     medal_cols = [x for x in battles.columns if re.compile("^medal\d-.+").match(x)]
@@ -169,7 +171,7 @@ def to_abilities(players: pd.DataFrame) -> pd.DataFrame:
     def ability_to_df(ability_col: str) -> pd.DataFrame:
         exclude_cols = [x for x in ability_cols if x != ability_col]
         df = players.drop(columns=exclude_cols)
-        df = df.rename(columns={ ability_col: "ability-point"})
+        df = df.rename(columns={ability_col: "ability-point"})
         df["ability"] = re.sub("^ability-", "", ability_col)
         return df
 
