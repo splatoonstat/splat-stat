@@ -6,6 +6,7 @@ FROM continuumio/anaconda3:latest
 #   pip install Keras && \
 #   pip install tensorflow
 RUN conda install -c conda-forge psycopg2
+RUN conda install -c conda-forge python-dotenv
 
 # コンテナ側のルート直下に workdir/ という名前の作業ディレクトリを作り移動する
 WORKDIR /workdir
